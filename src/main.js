@@ -12,7 +12,8 @@ import  '@/plugin/directive'
 import './components';
 
 require('./mock/mock');
-
+import axios from '@/http/httpConfig'
+Vue.prototype.$http = axios
 window.vm = new Vue({
     router,
     store,

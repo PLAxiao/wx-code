@@ -30,8 +30,8 @@ http.interceptors.request.use(function (config) {
 
 /**
  * 状态码判断 具体根据当前后台返回业务来定
- * @param {*请求状态码} status 
- * @param {*错误信息} err 
+ * @param {*请求状态码} status
+ * @param {*错误信息} err
  */
 const errorHandle = (status, response) => {
     console.log(response)
@@ -62,7 +62,7 @@ http.interceptors.response.use(response => {
 }, error => {
     const { response } = error;
     if (response) {
-        // 请求已发出，但是不在2xx的范围 
+        // 请求已发出，但是不在2xx的范围
         errorHandle(response.status, response);
         return Promise.reject(response);
     } else {
@@ -79,7 +79,8 @@ http.interceptors.response.use(response => {
  * 请求地址处理
  */
 http.adornUrl = (url) => {
-    return url;
+    console.log(url)
+    return url
 }
 
 /**
@@ -153,13 +154,15 @@ http.windJsonPost = function (url, params) {
  * @param {String} url [请求地址]
  * @param {Object} params [请求携带参数]
  */
-http.windGet = function (url, params) {
+http.windGet = function (url, params = {}) {
     return new Promise((resolve, reject) => {
         http.get(http.adornUrl(url), { params: params })
             .then(res => {
+                console.log('then')
                 resolve(res.data)
             })
             .catch(error => {
+                console.log('catch')
                 reject(error)
             })
     })
