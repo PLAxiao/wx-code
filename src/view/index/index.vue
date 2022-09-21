@@ -48,7 +48,7 @@
 							<template slot-scope="scope">
 								<el-button @click="handleClick(scope.row.content)" type="text" size="small">查看</el-button>
 								<el-button @click="handleClick(scope.row.content, scope.row.id)" type="text" size="small">生成二维码</el-button>
-								<el-button type="text" size="small" @click="createForm('edit', scope.row)">编辑</el-button>
+								<!-- <el-button type="text" size="small" @click="createForm('edit', scope.row)">编辑</el-button> -->
 								<el-button type="text" size="small" @click="deleteItem(scope.row.id)">删除</el-button>
 							</template>
 						</el-table-column>
@@ -102,6 +102,7 @@
 export default {
 	data() {
 		return {
+			url:'http://47.108.66.41:9992',
 			dialogFormVisible: false,
 			isedit: false,
       isQRCode: false,
@@ -125,7 +126,7 @@ export default {
 	},
 	methods:{
 		init() {
-            this.$http.get('/data/page').then(res =>{
+        this.$http.get('http://47.108.66.41:9992/data/page').then(res =>{
 				this.tableData = res.content
 				this.totalElements = res.totalElements
 			})
@@ -154,7 +155,7 @@ export default {
 			})
 		},
 		handleCurrentChange(val) {
-			this.$http.get(`/data/page?pageNum=${val}`).then(res =>{
+			this.$http.get(`http://47.108.66.41:9992/data/page?pageNum=${val}`).then(res =>{
 				this.tableData = res.content
 				this.totalElements = res.totalElements
 			})
@@ -186,7 +187,7 @@ export default {
 				}
 			})
 			if(this.isedit) {
-				this.$http.post('/data/save',{
+				this.$http.post('http://47.108.66.41:9992/data/save',{
 					content:JSON.stringify(content),
 					name:this.name,
 					id: this.id
@@ -194,7 +195,7 @@ export default {
 					this.init()
 				})
 			} else {
-				this.$http.post('/data/save',{
+				this.$http.post('http://47.108.66.41:9992/data/save',{
 					content:JSON.stringify(content),
 					name:this.name
 				}).then(res =>{
@@ -215,15 +216,15 @@ export default {
 				this.isQRCode = true
 				this.addQRCode(row)
 			} else {
-				let routeData = this.$router.resolve({ name: 'detail', query: {  content: row } });
-				window.open(routeData.href, '_blank');
+				// let routeData = this.$router.resolve({ name: 'detail', query: {  content: row } });
+				window.open(`http://47.108.66.41:9992/detail?content=${row}`, '_blank');
 			}
 
 		},
 		addQRCode(row) {
 				this.isShowOpen()
 			  new QRCode(this.$refs.qrCodeUrl,{
-					text: `/detail?content=${row}`,//"https://www.baidu.com",
+					text: `http://47.108.66.41:9992/detail?content=${row}`,//"https://www.baidu.com",
 					width: 200,
 					height: 200,
 					colorDark: "#000000",  
@@ -237,7 +238,7 @@ export default {
 				codeHtml.innerHTML = "";
 		},
 		deleteItem(id) {
-			axios.delete(`/data/${id}`).then(res => {
+			axios.delete(`http://47.108.66.41:9992/data/${id}`).then(res => {
 				this.init()
 			})
 		}
