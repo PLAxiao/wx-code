@@ -16,33 +16,39 @@
 						:data="tableData"
 						border>
 						<el-table-column
-							prop="name"
-							label="名称"
-							>
-						</el-table-column>
-						<el-table-column
 							prop="id"
 							label="id"
 							>
 						</el-table-column>
 						<el-table-column
+							prop="name"
+							label="名称"
+							>
+						</el-table-column>
+						<el-table-column
 							prop="createTime"
 							label="创建时间"
-							>
+						>
+						   <template slot-scope="scope">
+                               <span class="status-edit">{{handelTime(scope.row.createTime)}}</span>
+                            </template>
+                  
 						</el-table-column>
 						<el-table-column
 							prop="updateTime"
 							label="更新时间"
 							>
+							<template slot-scope="scope">
+                               <span class="status-edit">{{handelTime(scope.row.updateTime)}}</span>
+                            </template>
 						</el-table-column>
 						<el-table-column
 							label="操作"
 						>
 							<template slot-scope="scope">
 								<el-button @click="handleClick(scope.row.content)" type="text" size="small">查看</el-button>
-								<el-button type="text" size="small">编辑</el-button>
-								<!-- <el-button type="text" size="small">生成二维码</el-button> -->
-								<el-button type="text" size="small" v-if="scope.row.deleted">删除</el-button>
+								<el-button type="text" size="small" @click="createForm('edit', scope.row)">编辑</el-button>
+								<el-button type="text" size="small" @click="deleteItem(scope.row.id)">删除</el-button>
 							</template>
 						</el-table-column>
 					</el-table>
@@ -83,14 +89,17 @@
 	</div>
 </template>
 <script>
-import JsonpTemplatePlugin from 'webpack/lib/web/JsonpTemplatePlugin';
+	import axios from 'axios';
 export default {
 	data() {
 		return {
 			dialogFormVisible: false,
+			isedit: false,
+
 			formLabelWidth: '60px',
 			searchInput: '',
 			totalElements: 0,
+			id: 0,
 			name:'',
 			form:[
 				{
@@ -103,13 +112,29 @@ export default {
 		}
 	},
 	mounted() {
-		this.$http.get('http://47.108.66.41:9992/data/page').then(res =>{
-			this.tableData = res.content
-			this.totalElements = res.totalElements
-		})
+		this.init()
 	},
 	methods:{
-		createForm() {
+		init() {
+            this.$http.get('/data/page').then(res =>{
+				this.tableData = res.content
+				this.totalElements = res.totalElements
+			})
+		},
+		createForm(type, content) {
+			if(type == 'edit') {
+				this.isedit = true
+				this.name = content.name
+				this.id = content.id
+				this.form = [JSON.parse(content.content)]
+				let arr = []
+				Object.keys(JSON.parse(content.content)).forEach(key =>{
+					arr.push({name: key, val: JSON.parse(content.content)[key] })
+				})
+				this.form = arr
+			} else{
+				this.isedit = false
+			}
 			this.dialogFormVisible = !this.dialogFormVisible
 		},
 		addItem(index) {
@@ -120,11 +145,20 @@ export default {
 			})
 		},
 		handleCurrentChange(val) {
-			this.$http.get('http://47.108.66.41:9992/data/page', {pageNum: val}).then(res =>{
-					this.tableData = res.content
-					this.totalElements = res.totalElements
-				})
-
+			this.$http.get(`/data/page?pageNum=${val}`).then(res =>{
+				this.tableData = res.content
+				this.totalElements = res.totalElements
+			})
+		},
+		handelTime(time) {
+            if(!time) return time;
+			var date = time.substr(0, 10); //年月日
+			var timeFlag = date 
+			timeFlag = timeFlag.replace(/-/g, "/");
+			timeFlag = new Date(timeFlag);
+			timeFlag = new Date(timeFlag.getTime() + 8 * 3600 * 1000);
+			timeFlag = timeFlag.getFullYear() + '-' + ((timeFlag.getMonth() + 1) < 10 ? "0" + (timeFlag.getMonth() + 1) : (timeFlag.getMonth() + 1)) + '-' + (timeFlag.getDate() < 10 ? "0" + timeFlag.getDate() : timeFlag.getDate());
+			return timeFlag
 		},
 		saveFome() {
 			let content = {}
@@ -133,34 +167,53 @@ export default {
 			})
 			if(!bol) {
 				return this.$message({
-          message: '有没填写文字，表单请填写完整',
-          type: 'warning'
-        });
+				message: '有没填写文字，表单请填写完整',
+				type: 'warning'
+			});
 			}
 			this.form.forEach(item => {
 				if(item.val && item.name) {
 					return content[item.name] = item.val
 				}
 			})
-			console.log(content, 'dd',JSON.stringify(content), 999)
-			this.$http.post(`http://47.108.66.41:9992/data?content=${JSON.stringify(content)}&name=${this.name}`).then(res =>{
-				console.log(res)
-			})
+			if(this.isedit) {
+				this.$http.post('/data/save',{
+					content:JSON.stringify(content),
+					name:this.name,
+					id: this.id
+				}).then(res =>{
+					this.init()
+				})
+			} else {
+				this.$http.post('/data/save',{
+					content:JSON.stringify(content),
+					name:this.name
+				}).then(res =>{
+					this.init()
+				})
+			}
+			
+            this.createForm()
 			this.form = [{
 				name: '',
 				val: '',
 				index: '选项1',
 			}]
-			this.createForm()
+			
 		},
 		handleClick(row) {
-      this.$router.push({
+		    this.$router.push({
 				name:'detail',
 				params:{
 					content: row
 				}
-		})
-    },
+			})
+		},
+		deleteItem(id) {
+			axios.delete(`/data/${id}`).then(res => {
+				this.init()
+			})
+		}
 	}
 };
 </script>

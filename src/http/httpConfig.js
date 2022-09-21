@@ -41,6 +41,9 @@ var instance = axios.create({
 
 // 添加请求拦截器
 instance.interceptors.request.use(
+    function(config) {
+        return config
+    },
     function(error) {
         return Promise.reject(error)
     }
@@ -78,6 +81,7 @@ http.post = function(url, data, options) {
         instance
             .post(url, data, options)
             .then(response => {
+                console.log(response, '000')
                resolve(response.data)
             })
             .catch(e => {
@@ -85,5 +89,7 @@ http.post = function(url, data, options) {
             })
     })
 }
+
+
 
 export default http

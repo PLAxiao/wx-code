@@ -186,16 +186,16 @@ module.exports = {
         port: 6060, // 端口号
         https: false,
         hotOnly: true, // 热更新
-        // proxy: {
-        //     '^/api': {
-        //         target: 'http://47.108.66.41:9992', //process.env.VUE_APP_SSO, // 重写路径
-        //         ws: true, //开启WebSocket
-        //         secure: false, // 如果是https接口，需要配置这个参数
-        //         changeOrigin: true,
-        //         pathRewrite: {   //重写路径，这种是没有我们定义的前缀
-        //             '^/api': ''
-        //         }
-        //     }
-        // }
+        proxy: {
+            '^/data': {
+                target: 'http://47.108.66.41:9992', //process.env.VUE_APP_SSO, // 重写路径
+                ws: true, //开启WebSocket
+                secure: false, // 如果是https接口，需要配置这个参数
+                changeOrigin: true,
+                // pathRewrite: {   //重写路径，这种是没有我们定义的前缀
+                //     '^/api': ''
+                // }
+            }
+        }
     }
 }

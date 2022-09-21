@@ -13,11 +13,13 @@
                 广州铭太科技信息有限公司承建
             </p>
         </div>
+        <div id="qrcode" ref="qrCodeUrl"></div>
         <el-button class="create-button" @click="createForm" type="primary">生成二维码</el-button>
     </div>
 
 </template>
 <script>
+import QRCode from "qrcodejs2";
 export default {
     data() {
         return {
@@ -32,9 +34,21 @@ export default {
         goBack(){
             this.$router.push('/index')
         },
-        createForm() {
-
-        }
+        createForm() {   
+            this.isShowOpen()
+            let qrcode = new QRCode(this.$refs.qrCodeUrl,{ 
+            text: 'localhost:6060',//"https://www.baidu.com",
+            width: 200, 
+            height: 200, 
+            colorDark: "#000000",  
+            colorLight: "#ffffff", 
+            correctLevel: QRCode.CorrectLevel.H
+            }); 
+        },
+        isShowOpen () {    
+            const codeHtml = document.getElementById("qrcode");    
+            codeHtml.innerHTML = "";  
+        },
     }
 }
 </script>
@@ -57,23 +71,25 @@ export default {
     width:50%;
     margin:auto;
     padding:0;
-    .item{
+   
+  }
+  .item{
         height: 50px;
-        display: flex;
-        p{
-            padding: 0 10px;
-            flex:1;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            height:100%;
-            border-bottom: 1px solid #ccc;
-            &:last-child{
-                justify-content: flex-start;
-                border-left:1px solid #ccc;
-            }
-        }
+        display: flex;   
     }
+   .box p{
+        padding: 0 10px;
+        flex:1;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height:100%;
+        border-bottom: 1px solid #ccc;
+        
+   }
+   .box p:last-child{
+        justify-content: flex-start;
+        border-left:1px solid #ccc;
   }
   .back{
     font-size: 25px;
@@ -81,7 +97,12 @@ export default {
     cursor: pointer;
   }
   .create-button{
-     width:100px;
-     margin:500px auto;
+    position: absolute;
+     width:140px;
+     top: 250px;
+     left:8%;
+  }
+  #qrcode{
+    margin:300px 100px;
   }
 </style>
