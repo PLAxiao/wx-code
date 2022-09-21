@@ -6,7 +6,7 @@ const music = r => require.ensure([], () => r(require('@/view/music/music.vue'))
 const error = r => require.ensure([], () => r(require('@/view/404/404.vue')), 'error');
 const defaultRouter = [
     {
-        path: "/", 
+        path: "/",
         component: main, // 布局页 -- 放置公共组件
         redirect: {
             name: "index"
@@ -29,7 +29,7 @@ const defaultRouter = [
                 }
             },
             {
-                path: '/detail',
+                path: '/detail/:content',
                 component: detail,
                 name: 'detail',
                 meta: {

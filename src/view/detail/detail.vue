@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div @click="goBack" class="back">返回</div>
+        <!-- <div @click="goBack" class="back">返回</div> -->
         <div class="box" v-if="Object.keys(content).length">
             <h3 class="title">江苏省注册会计师协会报告防伪报备查询系统</h3>
             <div class="item" v-for="(value,key) of content" :key="key">
@@ -13,8 +13,8 @@
                 广州铭太科技信息有限公司承建
             </p>
         </div>
-        <div id="qrcode" ref="qrCodeUrl"></div>
-        <el-button class="create-button" @click="createForm" type="primary">生成二维码</el-button>
+        <!-- <div id="qrcode" ref="qrCodeUrl"></div>
+        <el-button class="create-button" @click="createForm" type="primary">生成二维码</el-button> -->
     </div>
 
 </template>
@@ -27,27 +27,27 @@ export default {
         }
     },
     mounted() {
-        this.content = JSON.parse(this.$route.params.content)
+        this.content = JSON.parse(this.$route.query.content)
         console.log(typeof this.content)
     },
     methods:{
         goBack(){
             this.$router.push('/index')
         },
-        createForm() {   
+        createForm() {  
             this.isShowOpen()
-            let qrcode = new QRCode(this.$refs.qrCodeUrl,{ 
+            let qrcode = new QRCode(this.$refs.qrCodeUrl,{
             text: 'localhost:6060',//"https://www.baidu.com",
-            width: 200, 
-            height: 200, 
+            width: 200,
+            height: 200,
             colorDark: "#000000",  
-            colorLight: "#ffffff", 
+            colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
-            }); 
+            });
         },
-        isShowOpen () {    
-            const codeHtml = document.getElementById("qrcode");    
-            codeHtml.innerHTML = "";  
+        isShowOpen () {
+            const codeHtml = document.getElementById("qrcode");
+            codeHtml.innerHTML = "";
         },
     }
 }
@@ -71,11 +71,11 @@ export default {
     width:50%;
     margin:auto;
     padding:0;
-   
+
   }
   .item{
         height: 50px;
-        display: flex;   
+        display: flex;
     }
    .box p{
         padding: 0 10px;
@@ -85,7 +85,7 @@ export default {
         align-items: center;
         height:100%;
         border-bottom: 1px solid #ccc;
-        
+
    }
    .box p:last-child{
         justify-content: flex-start;

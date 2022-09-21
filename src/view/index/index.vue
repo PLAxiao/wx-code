@@ -32,7 +32,7 @@
 						   <template slot-scope="scope">
                                <span class="status-edit">{{handelTime(scope.row.createTime)}}</span>
                             </template>
-                  
+
 						</el-table-column>
 						<el-table-column
 							prop="updateTime"
@@ -47,6 +47,7 @@
 						>
 							<template slot-scope="scope">
 								<el-button @click="handleClick(scope.row.content)" type="text" size="small">查看</el-button>
+								<el-button @click="handleClick(scope.row.content, scope.row.id)" type="text" size="small">生成二维码</el-button>
 								<el-button type="text" size="small" @click="createForm('edit', scope.row)">编辑</el-button>
 								<el-button type="text" size="small" @click="deleteItem(scope.row.id)">删除</el-button>
 							</template>
@@ -86,16 +87,24 @@
 				<el-button type="primary" @click="saveFome">确 定</el-button>
 			</div>
 		</el-dialog>
+		<el-dialog title="新建表单" :visible.sync="isQRCode">
+      <div id="qrcode" ref="qrCodeUrl"></div>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="isQRCode = false">关闭</el-button>
+			</div>
+		</el-dialog>
+
 	</div>
 </template>
 <script>
 	import axios from 'axios';
+	import QRCode from 'qrcodejs2'
 export default {
 	data() {
 		return {
 			dialogFormVisible: false,
 			isedit: false,
-
+      isQRCode: false,
 			formLabelWidth: '60px',
 			searchInput: '',
 			totalElements: 0,
@@ -153,7 +162,7 @@ export default {
 		handelTime(time) {
             if(!time) return time;
 			var date = time.substr(0, 10); //年月日
-			var timeFlag = date 
+			var timeFlag = date
 			timeFlag = timeFlag.replace(/-/g, "/");
 			timeFlag = new Date(timeFlag);
 			timeFlag = new Date(timeFlag.getTime() + 8 * 3600 * 1000);
@@ -192,22 +201,40 @@ export default {
 					this.init()
 				})
 			}
-			
-            this.createForm()
+
+      this.createForm()
 			this.form = [{
 				name: '',
 				val: '',
 				index: '选项1',
 			}]
-			
+
 		},
-		handleClick(row) {
-		    this.$router.push({
-				name:'detail',
-				params:{
-					content: row
-				}
-			})
+		handleClick(row, id) {
+			if(id) {
+				this.isQRCode = true
+				this.addQRCode(row)
+			} else {
+				let routeData = this.$router.resolve({ name: 'detail', query: {  content: row } });
+				window.open(routeData.href, '_blank');
+			}
+
+		},
+		addQRCode(row) {
+				this.isShowOpen()
+			  new QRCode(this.$refs.qrCodeUrl,{
+					text: `/detail?content=${row}`,//"https://www.baidu.com",
+					width: 200,
+					height: 200,
+					colorDark: "#000000",  
+					colorLight: "#ffffff",
+					correctLevel: QRCode.CorrectLevel.H
+				});
+		},
+		isShowOpen () {
+			if(!this.isQRCode) return
+				const codeHtml = document.getElementById("qrcode");
+				codeHtml.innerHTML = "";
 		},
 		deleteItem(id) {
 			axios.delete(`/data/${id}`).then(res => {
@@ -244,4 +271,7 @@ export default {
 		bottom:100px;
 		right:20px;
 	}
+	#qrcode{
+    margin:auto;
+  }
 </style>
