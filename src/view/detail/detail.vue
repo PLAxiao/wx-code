@@ -2,7 +2,7 @@
     <div>
         <!-- <div @click="goBack" class="back">返回</div> -->
         <div class="box" v-if="Object.keys(content).length">
-            <h3 class="title">{{ name || 江苏省注册会计师协会报告防伪报备查询系统}}</h3>
+            <h3 class="title">{{ name }}</h3>
             <div class="item" v-for="(value,key) of content" :key="key">
                 <p>{{key}}</p>
                 <p>{{value}}</p>
