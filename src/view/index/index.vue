@@ -16,11 +16,6 @@
 						:data="tableData"
 						border>
 						<el-table-column
-							prop="id"
-							label="id"
-							>
-						</el-table-column>
-						<el-table-column
 							prop="name"
 							label="名称"
 							>
@@ -46,8 +41,8 @@
 							label="操作"
 						>
 							<template slot-scope="scope">
-								<el-button @click="handleClick(scope.row.content)" type="text" size="small">查看</el-button>
-								<el-button @click="handleClick(scope.row.content, scope.row.id)" type="text" size="small">生成二维码</el-button>
+								<el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+								<el-button @click="handleClick(scope.row, scope.row.url)" type="text" size="small">生成二维码</el-button>
 								<!-- <el-button type="text" size="small" @click="createForm('edit', scope.row)">编辑</el-button> -->
 								<el-button type="text" size="small" @click="deleteItem(scope.row.id)">删除</el-button>
 							</template>
@@ -64,13 +59,12 @@
 
 			</el-container>
 		</el-container>
-		<el-dialog title="新建表单" :visible.sync="dialogFormVisible">
+		<el-dialog title="新建项目" :visible.sync="dialogFormVisible">
 			<el-form>
 				<div style="display: flex;margin-bottom: 20px;">
-					<span style="width:50px;margin-left:17px;">表头</span>
-					<el-input v-model="name" placeholder="请输入表头名"></el-input>
+					<span style="width:55px;margin-left:17px;">项目名称</span>
+					<el-input v-model="name" placeholder="请输入项目名称"></el-input>
 				</div>
-
 				<div v-for="(item, index) of form" :key="index">
 						<el-form-item :label="`选项${index + 1}`" :label-width="formLabelWidth" >
 						<div class="item">
@@ -126,7 +120,7 @@ export default {
 	},
 	methods:{
 		init() {
-        this.$http.get('http://47.108.66.41:9992/data/page').then(res =>{
+        this.$http.get('/data/page').then(res =>{
 				this.tableData = res.content
 				this.totalElements = res.totalElements
 			})
@@ -155,7 +149,7 @@ export default {
 			})
 		},
 		handleCurrentChange(val) {
-			this.$http.get(`http://47.108.66.41:9992/data/page?pageNum=${val}`).then(res =>{
+			this.$http.get(`/data/page?pageNum=${val}`).then(res =>{
 				this.tableData = res.content
 				this.totalElements = res.totalElements
 			})
@@ -187,7 +181,7 @@ export default {
 				}
 			})
 			if(this.isedit) {
-				this.$http.post('http://47.108.66.41:9992/data/save',{
+				this.$http.post('/data/save',{
 					content:JSON.stringify(content),
 					name:this.name,
 					id: this.id
@@ -195,7 +189,7 @@ export default {
 					this.init()
 				})
 			} else {
-				this.$http.post('http://47.108.66.41:9992/data/save',{
+				this.$http.post('/data/save',{
 					content:JSON.stringify(content),
 					name:this.name
 				}).then(res =>{
@@ -211,20 +205,24 @@ export default {
 			}]
 
 		},
-		handleClick(row, id) {
-			if(id) {
+		handleClick(row, url) {
+			if(url) {
 				this.isQRCode = true
-				this.addQRCode(row)
+				this.addQRCode(row, url)
 			} else {
-				// let routeData = this.$router.resolve({ name: 'detail', query: {  content: row } });
-				window.open(`http://47.108.66.41:9992/detail?content=${row}`, '_blank');
+				this.$router.push({
+					name:'detail',
+					query:{
+						id: row.id
+					}
+				})
+				// window.open(`data/${row.id}`)
 			}
-
 		},
-		addQRCode(row) {
-				this.isShowOpen()
-			  new QRCode(this.$refs.qrCodeUrl,{
-					text: `http://47.108.66.41:9992/detail?content=${row}`,//"https://www.baidu.com",
+		addQRCode(row, url) {
+			  this.isShowOpen()
+			  new QRCode(this.$refs.qrCodeUrl, {
+					text: 'http://47.108.66.41:8081/#/detail?id=52',//url,
 					width: 200,
 					height: 200,
 					colorDark: "#000000",  
@@ -238,7 +236,7 @@ export default {
 				codeHtml.innerHTML = "";
 		},
 		deleteItem(id) {
-			axios.delete(`http://47.108.66.41:9992/data/${id}`).then(res => {
+			axios.delete(`/data/${id}`).then(res => {
 				this.init()
 			})
 		}

@@ -29,7 +29,7 @@ const defaultRouter = [
                 }
             },
             {
-                path: '/detail/:content',
+                path: '/detail',
                 component: detail,
                 name: 'detail',
                 meta: {

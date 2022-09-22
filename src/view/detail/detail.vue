@@ -2,7 +2,7 @@
     <div>
         <!-- <div @click="goBack" class="back">返回</div> -->
         <div class="box" v-if="Object.keys(content).length">
-            <h3 class="title">江苏省注册会计师协会报告防伪报备查询系统</h3>
+            <h3 class="title">{{ name || 江苏省注册会计师协会报告防伪报备查询系统}}</h3>
             <div class="item" v-for="(value,key) of content" :key="key">
                 <p>{{key}}</p>
                 <p>{{value}}</p>
@@ -13,42 +13,35 @@
                 广州铭太科技信息有限公司承建
             </p>
         </div>
-        <!-- <div id="qrcode" ref="qrCodeUrl"></div>
-        <el-button class="create-button" @click="createForm" type="primary">生成二维码</el-button> -->
     </div>
 
 </template>
 <script>
 import QRCode from "qrcodejs2";
+import JsonExportsDependency from "webpack/lib/dependencies/JsonExportsDependency";
 export default {
     data() {
         return {
-            content: {}
+            id: 0,
+            content: {},
+            name:''
         }
     },
     mounted() {
-        this.content = JSON.parse(this.$route.query.content)
-        console.log(typeof this.content)
+         this.id = this.$route.query.id
+         this.init()
     },
     methods:{
         goBack(){
             this.$router.push('/index')
         },
-        createForm() {  
-            this.isShowOpen()
-            let qrcode = new QRCode(this.$refs.qrCodeUrl,{
-            text: 'localhost:6060',//"https://www.baidu.com",
-            width: 200,
-            height: 200,
-            colorDark: "#000000",  
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-            });
-        },
-        isShowOpen () {
-            const codeHtml = document.getElementById("qrcode");
-            codeHtml.innerHTML = "";
-        },
+        init() {
+            let arr = []
+            this.$http.get(`/data/${this.id}`).then(res =>{
+				this.content = JSON.parse(res.content)
+				this.name = res.name
+			})
+        }
     }
 }
 </script>
