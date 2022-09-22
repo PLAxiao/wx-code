@@ -221,7 +221,7 @@ export default {
 		addQRCode(row, url) {
 			  this.$nextTick(()=>{
 				new QRCode(this.$refs.qrCodeUrl, {
-					text: 'http://47.108.66.41:8081/#/detail?id=52',
+					text: url,
 					width: 200,
 					height: 200,
 					colorDark: "#000000",  
