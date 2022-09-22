@@ -81,12 +81,12 @@
 				<el-button type="primary" @click="saveFome">确 定</el-button>
 			</div>
 		</el-dialog>
-		<el-dialog title="新建表单" :visible.sync="isQRCode">
-      <div id="qrcode" ref="qrCodeUrl"></div>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="isQRCode = false">关闭</el-button>
-			</div>
-		</el-dialog>
+		<div v-if="isQRCode" class="code">
+		        <div id="qrcode" ref="qrCodeUrl"></div>
+				<div slot="footer" class="footer">
+					<el-button @click="closeDialog">关闭</el-button>
+				</div>
+		</div>
 
 	</div>
 </template>
@@ -99,7 +99,7 @@ export default {
 			url:'http://47.108.66.41:9992',
 			dialogFormVisible: false,
 			isedit: false,
-      isQRCode: false,
+            isQRCode: false,
 			formLabelWidth: '60px',
 			searchInput: '',
 			totalElements: 0,
@@ -216,24 +216,28 @@ export default {
 						id: row.id
 					}
 				})
-				// window.open(`data/${row.id}`)
 			}
 		},
 		addQRCode(row, url) {
-			  this.isShowOpen()
-			  new QRCode(this.$refs.qrCodeUrl, {
-					text: 'http://47.108.66.41:8081/#/detail?id=52',//url,
+			  this.$nextTick(()=>{
+				new QRCode(this.$refs.qrCodeUrl, {
+					text: 'http://47.108.66.41:8081/#/detail?id=52',
 					width: 200,
 					height: 200,
 					colorDark: "#000000",  
 					colorLight: "#ffffff",
 					correctLevel: QRCode.CorrectLevel.H
-				});
+			    });
+			  })
+			  
+		},
+		closeDialog() {
+			this.isQRCode = false
+			this.isShowOpen()
 		},
 		isShowOpen () {
-			if(!this.isQRCode) return
-				const codeHtml = document.getElementById("qrcode");
-				codeHtml.innerHTML = "";
+			const codeHtml = document.getElementById("qrcode");
+			codeHtml.innerHTML = "";
 		},
 		deleteItem(id) {
 			axios.delete(`/data/${id}`).then(res => {
@@ -244,6 +248,19 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+  .footer{
+	position: absolute;
+	bottom:10px;
+	right:10px;
+  }
+  .code{
+	position:absolute;
+	top:40%;
+	left:45%;
+	width:500px;
+	height: 400px;
+	background:gray;
+  }
   .outbox,.el-container{
 	height:100%;
 	overflow: hidden;
@@ -271,6 +288,6 @@ export default {
 		right:20px;
 	}
 	#qrcode{
-    margin:auto;
-  }
+      margin:30px 50px;
+    }
 </style>
