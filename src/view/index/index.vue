@@ -259,7 +259,7 @@ export default {
 	left:45%;
 	width:500px;
 	height: 400px;
-	background:gray;
+	border:1px solid #ccc;
   }
   .outbox,.el-container{
 	height:100%;
