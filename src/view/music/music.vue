@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="music">
         <div class="music__main">
             <div :class="['music__main__cover',isPlay ? 'active' : '']" @click="play">
@@ -244,4 +244,4 @@ export default {
         }
     }
 }
-</style>
+</style> -->

@@ -2,7 +2,7 @@
     <div>
         <!-- <div @click="goBack" class="back">返回</div> -->
         <div class="box" v-if="Object.keys(content).length">
-            <h3 class="title">{{ name }}</h3>
+            <h5>{{ name }}</h5>
             <div class="item" v-for="(value,key) of content" :key="key">
                 <p>{{key}}</p>
                 <p>{{value}}</p>
@@ -17,8 +17,6 @@
 
 </template>
 <script>
-import QRCode from "qrcodejs2";
-import JsonExportsDependency from "webpack/lib/dependencies/JsonExportsDependency";
 export default {
     data() {
         return {
@@ -38,15 +36,16 @@ export default {
         init() {
             let arr = []
             this.$http.get(`/data/${this.id}`).then(res =>{
-				this.content = JSON.parse(res.content)
-				this.name = res.name
-			})
+              this.content = JSON.parse(res.content)
+              this.name = res.name
+            })
         }
     }
 }
 </script>
 <style lang="less" scoped>
   .title{
+    font-size: 10px;
     margin:0 auto -12px;
     height:60px;
     line-height:60px;
@@ -61,7 +60,7 @@ export default {
     margin: 50px auto;
   }
   .box{
-    width:50%;
+    width:80%;
     margin:auto;
     padding:0;
 
