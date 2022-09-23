@@ -60,7 +60,7 @@ export default {
     margin: 50px auto;
   }
   .box{
-    width:80%;
+
     margin:auto;
     padding:0;
 
@@ -96,5 +96,8 @@ export default {
   }
   #qrcode{
     margin:300px 100px;
+  }
+  h5{
+    text-align: center;
   }
 </style>
